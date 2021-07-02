@@ -1,5 +1,6 @@
 package Screen
 
+
 import Model.Board
 import Model.BoardEvent
 import javax.swing.JFrame
@@ -10,28 +11,32 @@ fun main(args: Array<String>) {
     ScreenBoard()
 }
 
-class ScreenBoard : JFrame(){
-    private val  board = Board(16,3,89)
+class ScreenBoard : JFrame() {
+
+    private val board = Board(16, 30, 50)
     private val panelBoard = PanelBoard(board)
 
-    init{
-        board.onEvent ( this::showResult )
+    init {
+        board.onEvent(this::showResult)
         add(panelBoard)
-        setSize(690,438)
+
+        setSize(690, 438)
         setLocationRelativeTo(null)
         defaultCloseOperation = EXIT_ON_CLOSE
         title = "Mine Field"
         isVisible = true
     }
 
-    private fun showResult(event:BoardEvent){
+    private fun showResult(evento: BoardEvent) {
         SwingUtilities.invokeLater {
-            val msg = when(event){
-                BoardEvent.VITORY -> "Win"
-                BoardEvent.LOSER -> "Loser.. :P"
+            val msg = when(evento) {
+                BoardEvent.VITORY -> "Winner!"
+                BoardEvent.LOSER -> "Loser... :P"
             }
+
             JOptionPane.showMessageDialog(this, msg)
             board.reset()
+
             panelBoard.repaint()
             panelBoard.validate()
         }
