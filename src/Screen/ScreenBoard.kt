@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 
 class ScreenBoard : JFrame() {
 
-    private val board = Board(16, 30, 50)
+    private val board = Board(16, 30, 45)
     private val panelBoard = PanelBoard(board)
 
     init {
@@ -31,12 +31,10 @@ class ScreenBoard : JFrame() {
         SwingUtilities.invokeLater {
             val msg = when(evento) {
                 BoardEvent.VITORY -> "Winner!"
-                BoardEvent.LOSER -> "Loser... :P"
+                BoardEvent.LOSER -> {"Loser... :P"}
             }
-
             JOptionPane.showMessageDialog(this, msg)
             board.reset()
-
             panelBoard.repaint()
             panelBoard.validate()
         }

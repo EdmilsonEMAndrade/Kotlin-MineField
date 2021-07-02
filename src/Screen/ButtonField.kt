@@ -1,5 +1,6 @@
 package Screen
 
+import Model.Board
 import Model.EventField
 import Model.Field
 import java.awt.Color
@@ -16,6 +17,7 @@ private val Color_TXT_GREEN = Color(0,100,0)
 
 
 class ButtonField(private val field: Field):JButton() {
+
     init{
         font = font.deriveFont((Font.BOLD))
         background = Color_BG_NORMAL
@@ -28,6 +30,8 @@ class ButtonField(private val field: Field):JButton() {
     private fun applyStyle(field:Field, eventField: EventField){
         when(eventField){
             EventField.EXPLOSION -> applyExplosion()
+            EventField.SHOWMINE -> applyShowMine()
+            EventField.SHOWMINECHECK -> applyShowMineChecked()
             EventField.OPENING -> applyOpen()
             EventField.CHECKING -> applyCheck()
             else -> applyNormal()
@@ -41,6 +45,16 @@ class ButtonField(private val field: Field):JButton() {
 
     private fun applyExplosion(){
         background = Color_BG_EXPLOSION
+        text = "X"
+    }
+    private fun applyShowMine(){
+        border = BorderFactory.createLineBorder(Color.GRAY)
+        text = "X"
+        foreground = Color.RED
+    }
+    private fun applyShowMineChecked(){
+        background = Color_BG_CHECK
+        border = BorderFactory.createLineBorder(Color.GRAY)
         text = "X"
     }
 

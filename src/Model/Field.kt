@@ -2,15 +2,15 @@ package Model
 
 import kotlin.reflect.jvm.internal.impl.utils.DFS
 
-enum class EventField {OPENING, CHECKING, UNCHECKING, EXPLOSION, RESET}
-
+enum class EventField {OPENING, CHECKING, UNCHECKING, EXPLOSION, RESET, SHOWMINE, SHOWMINECHECK}
+private var endgame: Boolean = false
 data class Field(val row:Int, val column:Int){
     private val neighbors = ArrayList<Field>()
     private val callbacks = ArrayList<(Field, EventField) -> Unit>()
+
     var checked: Boolean = false
     var open : Boolean = false
     var mined : Boolean = false
-
     //read
     val unchecked: Boolean get() = !checked
     val close: Boolean get() = !open
@@ -31,7 +31,15 @@ data class Field(val row:Int, val column:Int){
         if(close){
             open = true
             if(mined){
-                callbacks.forEach{ it(this,EventField.EXPLOSION)}
+
+                if(!endgame) {
+                    endgame = true
+                    callbacks.forEach { it(this, EventField.EXPLOSION) }
+                }else if(unchecked){
+                    callbacks.forEach { it(this, EventField.SHOWMINE) }
+                }else{
+                    callbacks.forEach { it(this, EventField.SHOWMINECHECK) }
+                }
             }else{
                 callbacks.forEach{ it(this,EventField.OPENING)}
                 neighbors.filter{it.close && it.safe && neighborhoodSafe}.forEach { it.openField() }
@@ -55,6 +63,7 @@ data class Field(val row:Int, val column:Int){
         checked = false
         open = false
         mined = false
+        endgame = false
         callbacks.forEach { it(this, EventField.RESET) }
     }
 }

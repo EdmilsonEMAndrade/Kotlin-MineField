@@ -7,6 +7,8 @@ enum class BoardEvent{VITORY, LOSER}
 class Board(val numRows:Int, val numColumn: Int, private val getMine: Int) {
     private val fields = ArrayList<ArrayList<Field>>()
     private val callbacks = ArrayList<(BoardEvent)->Unit>()
+    var endGame: Boolean = false
+
     init{
         initFields()
         myNeighbors()
@@ -23,9 +25,11 @@ class Board(val numRows:Int, val numColumn: Int, private val getMine: Int) {
             }
         }
     }
+
     private fun myNeighbors(){
         forEachField { myNeighbors(it) }
     }
+
     private fun myNeighbors(field:Field){
         val (row, column) = field
         val rows = arrayOf( row -1, row , row +1)
@@ -37,9 +41,9 @@ class Board(val numRows:Int, val numColumn: Int, private val getMine: Int) {
             }
         }
     }
+
     private fun miningField(){
         val draw = Random
-
         var drawRow = -1
         var drawColumn = -1
         var numMine = 0
@@ -55,6 +59,7 @@ class Board(val numRows:Int, val numColumn: Int, private val getMine: Int) {
             }
         }
     }
+
     private fun goal():Boolean{
         var playerWin = true
         forEachField { if(!it.target)  playerWin = false}
@@ -63,7 +68,15 @@ class Board(val numRows:Int, val numColumn: Int, private val getMine: Int) {
 
     private fun play(field: Field, eventField: EventField){
         if(eventField == EventField.EXPLOSION){
-            callbacks.forEach { it(BoardEvent.LOSER) }
+            forEachField { f ->
+                if(f.mined){
+                    f.openField()
+                }
+            }
+            if(!endGame) {
+                callbacks.forEach { it(BoardEvent.LOSER) }
+                endGame = true
+            }
         }else if(goal()){
             callbacks.forEach { it(BoardEvent.VITORY) }
         }
@@ -79,5 +92,6 @@ class Board(val numRows:Int, val numColumn: Int, private val getMine: Int) {
     fun reset(){
         forEachField { it.reset() }
         miningField()
+        endGame = false
     }
 }
